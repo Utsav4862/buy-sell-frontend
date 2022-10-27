@@ -13,20 +13,20 @@ export const Categories = [
   },
   {
     id: 3,
-    name: "Electronics",
+    name: "Electronics & Appliances",
     img: require("../assets/Categories/electronic-device.png"),
-    navigate: "Electronics",
+    navigate: "Common",
   },
   {
     id: 4,
-    name: "Mobiles",
+    name: "Mobile",
     img: require("../assets/Categories/smartphone.png"),
     navigate: "Detail",
   },
   {
     id: 5,
-    name: "Books",
-    img: require("../assets/Categories/book-stack.png"),
-    navigate: "Books",
+    name: "Lifestyle",
+    img: require("../assets/Categories/lifestyle.png"),
+    navigate: "Common",
   },
 ];

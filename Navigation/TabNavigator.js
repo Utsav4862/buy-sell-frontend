@@ -7,17 +7,90 @@ import Profile from "../Screens/Profile";
 import AddProduct from "../Screens/AddProduct";
 import MyAds from "../Screens/MyAds";
 import AddStackNavigation from "./AddStackNavigation";
+import {
+  AntDesign,
+  Entypo,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false, }}>
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Chat" component={Chat} />
-      <Tab.Screen name="Add" component={AddStackNavigation} />
-      <Tab.Screen name="My-Ads" component={MyAds} />
-      <Tab.Screen name="Profile" component={Profile} />
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: { height: 60, paddingBottom: 7 },
+        tabBarInactiveTintColor: "lightgray",
+        tabBarActiveTintColor: "#2abd6e",
+        // tabBarShowLabel: false,
+        tabBarLabelStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={Home}
+        options={{
+          tabBarLabel: "HOME",
+          tabBarIcon: ({ color }) => (
+            <Entypo name="home" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Chat"
+        component={Chat}
+        options={{
+          tabBarLabel: "CHAT",
+          tabBarIcon: ({ color }) => (
+            <Entypo name="chat" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Add"
+        component={AddStackNavigation}
+        options={{
+          unmountOnBlur: true,
+          tabBarLabel: "SELL",
+          tabBarIcon: ({ color }) => (
+            <View style={{}}>
+              <MaterialIcons
+                name="add-circle-outline"
+                color={color}
+                size={35}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="My-Ads"
+        component={MyAds}
+        options={{
+          tabBarLabel: "MY ADS",
+          tabBarIcon: ({ color, focused }) =>
+            focused ? (
+              <AntDesign name="hearto" color={color} size={26} />
+            ) : (
+              <AntDesign name="hearto" color={color} size={26} />
+            ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          tabBarLabel: "ACCOUNT",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="account" color={color} size={26} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };

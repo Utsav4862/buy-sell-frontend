@@ -4,14 +4,41 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
+import { URL } from "../API/api";
 
 const Signup = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+
+  const signup = () => {
+    axios
+      .post(`${URL}/user/signup`, {
+        name: name,
+        email: email,
+        password: password,
+      })
+      .then((res) => {
+        let data = res.data;
+        if (data.exist) {
+          Alert.alert("Error", data.exist, [
+            { text: "Login", onPress: () => navigation.navigate("Login") },
+            { text: "Ok" },
+          ]);
+        } else {
+          Alert.alert("Success", "Registration Done!!!", [
+            { text: "Login Now", onPress: () => navigation.navigate("Login") },
+          ]);
+        }
+        // console.log(res);
+      });
+  };
+
   return (
     <View style={styles.mainContainer}>
       <SafeAreaView style={styles.container}>
@@ -40,8 +67,8 @@ const Signup = ({ navigation }) => {
           />
         </View>
 
-        <TouchableOpacity style={styles.btn}>
-          <Text style={{ color: "#fff", fontWeight: "bold" }}>Login</Text>
+        <TouchableOpacity style={styles.btn} onPress={signup}>
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>Sign Up</Text>
         </TouchableOpacity>
 
         <View style={styles.bottom}>

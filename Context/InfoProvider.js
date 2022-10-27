@@ -4,9 +4,9 @@ import React, { createContext, useContext, useState } from "react";
 const InfoContext = createContext();
 
 const InfoProvider = ({ children }) => {
-  const [location, setLocation] = useState();
+  const [currLocation, setCurrLocation] = useState();
   return (
-    <InfoContext.Provider value={{ location, setLocation }}>
+    <InfoContext.Provider value={{ currLocation, setCurrLocation }}>
       {children}
     </InfoContext.Provider>
   );

@@ -2,12 +2,13 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Categories } from "../data/categoryData";
+import { sellDetailState } from "../Context/SellDetailProvider";
 
 const AddProduct = ({ navigation }) => {
+  const { category, setCategory } = sellDetailState();
   const selection = (cat) => {
-    navigation.navigate(cat.navigate, {
-      category: cat.name,
-    });
+    setCategory(cat.name);
+    navigation.navigate(cat.navigate);
   };
   return (
     <View style={styles.main}>
@@ -26,7 +27,7 @@ const AddProduct = ({ navigation }) => {
               onPress={() => selection(cat)}
             >
               <Image source={cat.img} style={{ width: 100, height: 100 }} />
-              <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 15 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 16, marginTop: 15 }}>
                 {cat.name}
               </Text>
             </TouchableOpacity>

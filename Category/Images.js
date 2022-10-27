@@ -6,23 +6,22 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import ImageSlider from "../Components/ImageSlider";
+import { sellDetailState } from "../Context/SellDetailProvider";
 
 const Images = ({ route, navigation }) => {
-  const { category, detail } = route.params;
-
-  const [images, setImages] = useState([]);
+  const { images, setImages } = sellDetailState();
 
   const next = (nav) => {
-    navigation.navigate(nav, {
-      category: category,
-      detail: detail,
-      images: images,
-    });
+    navigation.navigate(nav);
   };
+
+  useEffect(() => {
+    setImages([]);
+  }, []);
 
   const uploadImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();

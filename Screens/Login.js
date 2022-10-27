@@ -4,17 +4,41 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
+import { URL } from "../API/api";
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const login = () => {
-    navigation.navigate("Tabs");
+    axios
+      .post(`${URL}/user/login`, {
+        email: email,
+        password: password,
+      })
+      .then(async (res) => {
+        let data = res.data;
+        console.log(data);
+        if (data.error) {
+          Alert.alert("Error", data.error, [
+            { text: "Sign Up", onPress: () => navigation.navigate("Signup") },
+            { text: "Ok" },
+          ]);
+        } else {
+          await SecureStore.setItemAsync("TOKEN", data.token);
+
+          navigation.navigate("Tabs");
+        }
+        // console.log(res);
+      });
   };
+
   return (
     <View style={styles.mainContainer}>
       <SafeAreaView style={styles.container}>

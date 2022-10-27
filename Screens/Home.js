@@ -16,12 +16,13 @@ import { InfoState } from "../Context/InfoProvider";
 import { Categories } from "../data/categoryData";
 
 const Home = () => {
-  const { location, setLocation } = InfoState();
+  const { currLocation, setCurrLocation } = InfoState();
   const [search, setSearch] = useState();
 
   const getLocation = () => {
     GetCurrentLocation().then((res) => {
-      setLocation(res);
+      setCurrLocation(res);
+      console.log(res);
     });
   };
 
@@ -34,9 +35,9 @@ const Home = () => {
         <TouchableOpacity style={styles.location}>
           <Text style={styles.locText}>
             <Ionicons name="location" size={18} />
-            {!location
+            {!currLocation
               ? " Loading..."
-              : ` ${location.district}, ${location.city}`}
+              : ` ${currLocation.district}, ${currLocation.city}`}
           </Text>
         </TouchableOpacity>
 
@@ -63,7 +64,15 @@ const Home = () => {
               {Categories.map((cat) => (
                 <View key={cat.id} style={styles.singleCat}>
                   <Image source={cat.img} style={{ width: 50, height: 50 }} />
-                  <Text style={{ fontWeight: "bold" }}>{cat.name}</Text>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 12,
+                      marginTop: 5,
+                    }}
+                  >
+                    {cat.name}
+                  </Text>
                 </View>
               ))}
             </ScrollView>
@@ -193,7 +202,7 @@ const styles = StyleSheet.create({
   innerWrapper: {
     margin: 10,
     marginTop: 0,
-    marginBottom: 100,
+    marginBottom: 85,
   },
   searchContainer: {
     flexDirection: "row",
@@ -235,7 +244,7 @@ const styles = StyleSheet.create({
   },
 
   singleCat: {
-    width: 90,
+    width: 100,
     justifyContent: "center",
     alignItems: "center",
   },

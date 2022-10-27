@@ -8,19 +8,84 @@ import {
 import React, { useEffect, useState } from "react";
 import { InfoState } from "../Context/InfoProvider";
 import { Ionicons } from "@expo/vector-icons";
+import { sellDetailState } from "../Context/SellDetailProvider";
+import axios from "axios";
+import { URL } from "../API/api";
+import { getTkn } from "../Functions/token";
 
 const Location = ({ route, navigation }) => {
-  const { location } = InfoState();
-  const [manLocation, setManLocation] = useState();
-  const { category, detail, image, price } = route.params;
-  const Post = () => {
-    navigation.navigate("Home", {
-      category: category,
-      detail: detail,
-      image: image,
-      price: price,
-      location: manLocation ? manLocation : location,
+  const { currLocation } = InfoState();
+  const {
+    category,
+    brand,
+    model,
+    year,
+    km,
+    title,
+    desc,
+    images,
+    price,
+    subCat,
+    location,
+    setLocation,
+  } = sellDetailState();
+  const [manLocation, setManLocation] = useState("");
+
+  const createFormData = (body = {}) => {
+    let formData = new FormData();
+    for (let i = 0; i < images.length; i++) {
+      const image = images[i];
+      // console.log(image);
+      formData.append("files", {
+        name: new Date() + "_profile",
+        uri: image.uri,
+        type: "image/jpg",
+      });
+    }
+
+    Object.keys(body).forEach((key) => {
+      console.log(key);
+      formData.append(key, body[key]);
     });
+
+    return formData;
+  };
+
+  const Post = () => {
+    if (manLocation != "") setLocation(manLocation);
+    else {
+      let tempLoc = `${currLocation.district}, ${currLocation.city}`;
+      setLocation(tempLoc);
+    }
+    console.log(location);
+    let body = {
+      category,
+      brand,
+      model,
+      year,
+      km,
+      title,
+      desc,
+      price,
+      subCat,
+      location,
+    };
+    let data = createFormData(body);
+    getTkn().then((tkn) => {
+      console.log(location);
+      let config = {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${tkn}`,
+        },
+      };
+
+      axios.post(`${URL}/product/add`, data, config).then((res) => {
+        console.log(res.data);
+      });
+    });
+    // navigation.navigate("Home");
   };
   return (
     <View style={styles.mainContainer}>
@@ -29,9 +94,12 @@ const Location = ({ route, navigation }) => {
           <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 5 }}>
             Your Current Location (Default)
           </Text>
-          <Text style={{ fontWeight: "700", color: "#1d9bf0" }}>
-            <Ionicons name="location" size={15} /> {location.district},{" "}
-            {location.city}
+
+          <Text style={{ fontWeight: "700", width: "100%", color: "#1d9bf0" }}>
+            <Ionicons name="location" size={15} />
+            {currLocation != undefined
+              ? `${currLocation.district},${currLocation.city}`
+              : "Select current Location"}
           </Text>
         </View>
       </TouchableOpacity>
@@ -47,7 +115,7 @@ const Location = ({ route, navigation }) => {
           placeholder="Area, City (Eg. Varachha, Surat)"
           style={styles.input}
           value={manLocation}
-          onChangeText={(text) => manLocation(text)}
+          onChangeText={(text) => setManLocation(text)}
         />
       </View>
       <TouchableOpacity style={styles.btn} onPress={Post}>

@@ -5,23 +5,20 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { sellDetailState } from "../Context/SellDetailProvider";
 
 const Price = ({ route, navigation }) => {
-  const { category, detail, images } = route.params;
-  const [price, setPrice] = useState(0);
-  console.log(route.params);
+  const { category, detail, images, price, setPrice } = sellDetailState();
 
   const next = (nav) => {
-    navigation.navigate(nav, {
-      category: category,
-      detail: detail,
-      images: images,
-      price: price,
-    });
+    navigation.navigate(nav);
   };
 
+  useEffect(() => {
+    setPrice(0);
+  }, []);
   return (
     <View style={styles.main}>
       <View
