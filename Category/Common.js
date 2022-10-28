@@ -12,17 +12,21 @@ import React, { useEffect, useState } from "react";
 import { ElectronicsData } from "../data/ElectronicsData";
 import { sellDetailState } from "../Context/SellDetailProvider";
 import { LifeStyleData } from "../data/LifeStyleData";
+import { InfoState } from "../Context/InfoProvider";
 
 const Electronics = ({ navigation, route }) => {
   const [flag, setFlag] = useState(true);
   const { category, setSubCat } = sellDetailState();
+  const { cat, setCat } = InfoState();
   const selection = (value) => {
+    if (cat) {
+    }
     setSubCat(value);
     navigation.navigate("Detail");
   };
 
   useEffect(() => {
-    if (category == "Lifestyle") setFlag(false);
+    if (category == "Lifestyle" || cat == "Lifestyle") setFlag(false);
     else setFlag(true);
 
     navigation.setOptions({ title: category });

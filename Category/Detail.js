@@ -14,6 +14,7 @@ import { CarData } from "../data/CarData";
 import { BikeData } from "../data/BikeData";
 import { MobileData } from "../data/MobileData";
 import { sellDetailState } from "../Context/SellDetailProvider";
+import { StatusBar } from "expo-status-bar";
 
 const Details = ({ route, navigation }) => {
   // const [brand, setBrand] = useState("");
@@ -42,7 +43,7 @@ const Details = ({ route, navigation }) => {
 
   const [flag, setFlag] = useState(0);
   // const { category, setDetail } = sellDetailState();
-  console.log(category);
+
   const next = (nav) => {
     navigation.navigate(nav);
   };

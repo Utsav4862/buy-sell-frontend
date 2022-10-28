@@ -10,7 +10,7 @@ const SellDetailProvider = ({ children }) => {
   const [images, setImages] = useState([]);
   const [price, setPrice] = useState(0);
   const [subCat, setSubCat] = useState();
-  const [location, setLocation] = useState();
+  const [location, setLocation] = useState("");
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [year, setYear] = useState();

@@ -8,14 +8,25 @@ import Images from "../Category/Images";
 import Location from "../Category/Location";
 import Price from "../Category/Price";
 import SellDetailProvider from "../Context/SellDetailProvider";
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from "@react-navigation/stack";
 
-const AddStack = createNativeStackNavigator();
+const AddStack = createStackNavigator();
 
 const AddStackNavigation = () => {
   // const { category } = sellDetailState();
   return (
     <SellDetailProvider>
-      <AddStack.Navigator>
+      <AddStack.Navigator
+        screenOptions={{
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      >
         <AddStack.Screen
           name="Add-Product"
           component={AddProduct}

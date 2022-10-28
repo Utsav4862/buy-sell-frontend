@@ -8,12 +8,20 @@ import {
 import React, { useEffect, useState } from "react";
 import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { sellDetailState } from "../Context/SellDetailProvider";
+import { InfoState } from "../Context/InfoProvider";
 
 const Price = ({ route, navigation }) => {
-  const { category, detail, images, price, setPrice } = sellDetailState();
+  const { currLocation } = InfoState();
+  const { category, detail, images, price, setPrice, setLocation } =
+    sellDetailState();
 
   const next = (nav) => {
     navigation.navigate(nav);
+    if (currLocation != undefined) {
+      let tempLoc = `${currLocation.district}, ${currLocation.city}`;
+      console.log(tempLoc, "temp");
+      setLocation(tempLoc);
+    }
   };
 
   useEffect(() => {

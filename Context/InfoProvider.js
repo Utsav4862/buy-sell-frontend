@@ -5,8 +5,13 @@ const InfoContext = createContext();
 
 const InfoProvider = ({ children }) => {
   const [currLocation, setCurrLocation] = useState();
+  const [cat, setCat] = useState("");
+  const [search, setSearch] = useState("");
+
   return (
-    <InfoContext.Provider value={{ currLocation, setCurrLocation }}>
+    <InfoContext.Provider
+      value={{ currLocation, setCurrLocation, cat, setCat, search, setSearch }}
+    >
       {children}
     </InfoContext.Provider>
   );

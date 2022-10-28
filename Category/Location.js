@@ -4,6 +4,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { InfoState } from "../Context/InfoProvider";
@@ -30,6 +31,15 @@ const Location = ({ route, navigation }) => {
     setLocation,
   } = sellDetailState();
   const [manLocation, setManLocation] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (manLocation == "" && currLocation) {
+      let tempLoc = `${currLocation.district}, ${currLocation.city}`;
+      console.log(tempLoc, "temp");
+      setLocation(tempLoc);
+    }
+  }, [manLocation]);
 
   const createFormData = (body = {}) => {
     let formData = new FormData();
@@ -44,20 +54,25 @@ const Location = ({ route, navigation }) => {
     }
 
     Object.keys(body).forEach((key) => {
-      console.log(key);
       formData.append(key, body[key]);
     });
 
     return formData;
   };
 
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   const Post = () => {
-    if (manLocation != "") setLocation(manLocation);
-    else {
-      let tempLoc = `${currLocation.district}, ${currLocation.city}`;
-      setLocation(tempLoc);
-    }
-    console.log(location);
+    setIsLoading(true);
+
+    setIsLoading(false);
+
     let body = {
       category,
       brand,
@@ -115,7 +130,10 @@ const Location = ({ route, navigation }) => {
           placeholder="Area, City (Eg. Varachha, Surat)"
           style={styles.input}
           value={manLocation}
-          onChangeText={(text) => setManLocation(text)}
+          onChangeText={(text) => {
+            setManLocation(text);
+            setLocation(text);
+          }}
         />
       </View>
       <TouchableOpacity style={styles.btn} onPress={Post}>

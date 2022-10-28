@@ -14,6 +14,7 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
+import HomeStackNav from "./HomeStackNav";
 
 const Tab = createBottomTabNavigator();
 
@@ -22,7 +23,10 @@ const TabNavigator = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { height: 60, paddingBottom: 7 },
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 7,
+        },
         tabBarInactiveTintColor: "lightgray",
         tabBarActiveTintColor: "#2abd6e",
         // tabBarShowLabel: false,
@@ -32,8 +36,8 @@ const TabNavigator = () => {
       }}
     >
       <Tab.Screen
-        name="Home"
-        component={Home}
+        name="HomeStack"
+        component={HomeStackNav}
         options={{
           tabBarLabel: "HOME",
           tabBarIcon: ({ color }) => (
@@ -69,10 +73,10 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="My-Ads"
+        name="Liked"
         component={MyAds}
         options={{
-          tabBarLabel: "MY ADS",
+          tabBarLabel: "Liked",
           tabBarIcon: ({ color, focused }) =>
             focused ? (
               <AntDesign name="hearto" color={color} size={26} />
