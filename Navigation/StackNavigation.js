@@ -12,6 +12,8 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from "@react-navigation/stack";
+import ProductScreen from "../Screens/ProductScreen";
+import Message from "../Screens/Message";
 
 const Stack = createStackNavigator();
 
@@ -38,12 +40,6 @@ const StackNavigation = () => {
         name="Login"
         component={Login}
         options={{
-          gestureEnabled: true,
-          gestureDirection: "horizontal",
-          transitionSpec: {
-            open: config,
-            close: config,
-          },
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
       />
@@ -56,7 +52,21 @@ const StackNavigation = () => {
       />
 
       <Stack.Screen name="Tabs" component={TabNavigator} />
+      <Stack.Screen
+        name="Product"
+        component={ProductScreen}
+        options={{
+          // gestureEnabled: true,
+          // gestureDirection: "horizontal",
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+      />
       <Stack.Screen name="OTP" component={OtpScreen} />
+      <Stack.Screen
+        name="Message"
+        component={Message}
+        options={{ headerShown: true, headerShadowVisible: true }}
+      />
     </Stack.Navigator>
   );
 };

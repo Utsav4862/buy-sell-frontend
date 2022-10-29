@@ -1,18 +1,15 @@
 import {
   ActivityIndicator,
-  Button,
   Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableHighlight,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useEffect, useState } from "react";
 import GetCurrentLocation from "../Functions/Location";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { InfoState } from "../Context/InfoProvider";
@@ -20,11 +17,9 @@ import { Categories } from "../data/categoryData";
 import axios from "axios";
 import { URL } from "../API/api";
 import { getTkn } from "../Functions/token";
-import { SearchBar } from "react-native-screens";
-import { sellDetailState } from "../Context/SellDetailProvider";
 
 const Home = ({ navigation }) => {
-  const { currLocation, setCurrLocation, cat, setCat } = InfoState();
+  const { currLocation, setCurrLocation, cat, setCat, setUser } = InfoState();
 
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +28,21 @@ const Home = ({ navigation }) => {
     GetCurrentLocation().then((res) => {
       setCurrLocation(res);
       console.log(res);
+    });
+  };
+
+  const getLoggedUser = () => {
+    getTkn().then((tkn) => {
+      let config = {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${tkn}`,
+        },
+      };
+      axios.get(`${URL}/user/currentUser`, config).then((res) => {
+        console.log(res.data);
+        setUser(res.data);
+      });
     });
   };
 
@@ -53,7 +63,7 @@ const Home = ({ navigation }) => {
         },
       };
       axios.get(`${URL}/product/all`, config).then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setProducts(res.data);
         setIsLoading(false);
       });
@@ -64,6 +74,7 @@ const Home = ({ navigation }) => {
     getLocation();
     getAllProducts();
     setCat("");
+    getLoggedUser();
   }, []);
   return (
     <View
@@ -152,7 +163,9 @@ const Home = ({ navigation }) => {
             <View style={styles.cardContainer}>
               {products.map((prod) => (
                 <TouchableHighlight
-                  onPress={() => console.log(prod.title)}
+                  onPress={() =>
+                    navigation.navigate("Product", { product: prod })
+                  }
                   underlayColor={"#f0f0f0"}
                   style={styles.card}
                   key={prod._id}

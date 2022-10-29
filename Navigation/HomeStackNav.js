@@ -8,7 +8,6 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from "@react-navigation/stack";
-
 const HomeStack = createStackNavigator();
 // const TransitionScreenOptions = {
 //   ...TransitionPresets.SlideFromRightIOS,
@@ -21,7 +20,6 @@ const HomeStackNav = () => {
         headerShown: false,
         gestureEnabled: true,
         gestureDirection: "horizontal",
-
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
     >

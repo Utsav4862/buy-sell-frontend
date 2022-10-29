@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -72,7 +73,7 @@ const Search = ({ route, navigation }) => {
   }, []);
   return (
     <View style={styles.container}>
-      <SafeAreaView>
+      <SafeAreaView style={{ marginBottom: 105 }}>
         <View
           style={{
             width: "100%",
@@ -112,7 +113,10 @@ const Search = ({ route, navigation }) => {
             </View>
           </View>
           <View
-            style={[styles.searchContainer, { marginLeft: 45, marginTop: 5 }]}
+            style={[
+              styles.searchContainer,
+              { marginLeft: 45, marginTop: 5, marginBottom: 10 },
+            ]}
           >
             <Ionicons
               name="location"
@@ -130,16 +134,30 @@ const Search = ({ route, navigation }) => {
             />
           </View>
         </View>
-        <View style={styles.resultContainer}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.resultContainer}
+        >
           {flag ? (
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <View>
               <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                {searchProducts.length} result found
+                {searchProducts.length} result found in {loc}
               </Text>
               <View style={styles.cardContainer}>
                 {searchProducts.map((prod) => (
-                  <View>
-                    <View style={styles.card} key={prod._id}>
+                  <TouchableHighlight
+                    onPress={() =>
+                      navigation.navigate("Product", { product: prod })
+                    }
+                    style={styles.card}
+                    underlayColor={"#f0f0f0"}
+                    key={prod._id}
+                  >
+                    <View
+                      style={
+                        ([styles.card], { width: "100%", flexDirection: "row" })
+                      }
+                    >
                       <View style={styles.img}>
                         <Image
                           source={{
@@ -166,7 +184,13 @@ const Search = ({ route, navigation }) => {
                         ) : (
                           ""
                         )}
-                        <Text style={{ color: "gray" }}>
+                        <Text
+                          style={{
+                            color: "gray",
+                            position: "absolute",
+                            bottom: 5,
+                          }}
+                        >
                           <Ionicons name="location" size={12} />{" "}
                           {prod.location.length > 15
                             ? prod.location.slice(0, 15) + "..."
@@ -174,14 +198,14 @@ const Search = ({ route, navigation }) => {
                         </Text>
                       </View>
                     </View>
-                  </View>
+                  </TouchableHighlight>
                 ))}
               </View>
-            </ScrollView>
+            </View>
           ) : (
             ""
           )}
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </View>
   );
@@ -194,6 +218,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     width: "100%",
+    // bottom: 50,
   },
 
   input: {
@@ -214,6 +239,8 @@ const styles = StyleSheet.create({
   },
   resultContainer: {
     margin: 20,
+    paddingBottom: 20,
+    // height: "100%",
   },
   cardContainer: {
     flexDirection: "column",
@@ -230,7 +257,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderWidth: 2,
     borderColor: "rgba(0,0,0,0.1)",
-    flexDirection: "row",
+
     borderRadius: 10,
   },
 
