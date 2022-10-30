@@ -9,24 +9,42 @@ import {
 import React, { useEffect, useState } from "react";
 import ImageSlider from "../Components/ImageSlider";
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { getTkn } from "../Functions/token";
+import axios from "axios";
+import { URL } from "../API/api";
+import { InfoState } from "../Context/InfoProvider";
 
 const ProductScreen = ({ route, navigation }) => {
+  const { user, setSelectedChat } = InfoState();
   const { product } = route.params;
   const [date, setDate] = useState();
+
+  const chatWithSeller = () => {
+    getTkn().then(async (tkn) => {
+      let config = {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${tkn}`,
+        },
+      };
+      let body = {
+        userId: product.user._id,
+        productId: product._id,
+      };
+      let { data } = await axios.post(`${URL}/chat`, body, config);
+      console.log(data);
+      setSelectedChat(data);
+      navigation.navigate("Message");
+    });
+  };
   useEffect(() => {
+    console.log(product);
     let d = product.createdAt.split("-").reverse();
     d = d[0].slice(0, 2) + "-" + d[1] + "-" + d[2];
     setDate(d);
   });
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity
-        style={{ marginLeft: 10 }}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="arrow-back" size={50} />
-      </TouchableOpacity> */}
-
       <TouchableOpacity
         style={{ position: "absolute", top: 50, zIndex: 5, marginLeft: 10 }}
         onPress={() => navigation.goBack()}
@@ -46,6 +64,10 @@ const ProductScreen = ({ route, navigation }) => {
               <Ionicons name="calendar" size={14} /> {date}
             </Text>
             <Text style={styles.commonTxt}>
+              <Ionicons name="heart" size={14} />{" "}
+              {product.likes ? product.likes.length : 0}
+            </Text>
+            <Text style={[styles.commonTxt, { maxWidth: "50%" }]}>
               <Ionicons name="location" size={14} /> {product.location}
             </Text>
           </View>
@@ -119,11 +141,15 @@ const ProductScreen = ({ route, navigation }) => {
         <View
           style={{ height: "100%", width: "49%", justifyContent: "center" }}
         >
-          <TouchableOpacity style={styles.btn}>
-            <Text style={{ color: "#fff", fontSize: 15, fontWeight: "bold" }}>
-              <AntDesign name="message1" size={15} /> Chat with Seller
-            </Text>
-          </TouchableOpacity>
+          {user._id !== product.user._id ? (
+            <TouchableOpacity style={styles.btn} onPress={chatWithSeller}>
+              <Text style={{ color: "#fff", fontSize: 15, fontWeight: "bold" }}>
+                <AntDesign name="message1" size={15} /> Chat with Seller
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            ""
+          )}
         </View>
       </View>
     </View>
@@ -149,6 +175,7 @@ const styles = StyleSheet.create({
   commonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    // flexWrap: "wrap",
   },
   commonTxt: {
     fontSize: 14,

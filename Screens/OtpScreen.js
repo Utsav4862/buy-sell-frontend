@@ -5,20 +5,28 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const OtpScreen = () => {
+const OtpScreen = ({ route, navigation }) => {
   const pin1Ref = useRef();
   const pin2Ref = useRef();
   const pin3Ref = useRef();
   const pin4Ref = useRef();
 
   const [otp, setOtp] = useState({ 1: "", 2: "", 3: "", 4: "" });
-
+  const { name, email, veriOtp } = route.params;
   const verify = () => {
     let finalOTP = otp[1] + otp[2] + otp[3] + otp[4];
-    console.log(finalOTP);
+    if (finalOTP == veriOtp) {
+      console.log("Success");
+      navigation.navigate("Password", {
+        name: name,
+        email: email,
+      });
+    } else {
+      console.log("Fail");
+    }
   };
 
   return (
@@ -37,7 +45,7 @@ const OtpScreen = () => {
               marginLeft: 15,
             }}
           >
-            Enter 4 digit code, which is sent to your mail address
+            Enter 4 digit code, which is sent you at {email}
           </Text>
         </View>
         <View style={styles.Form}>

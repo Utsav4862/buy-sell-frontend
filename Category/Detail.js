@@ -15,6 +15,7 @@ import { BikeData } from "../data/BikeData";
 import { MobileData } from "../data/MobileData";
 import { sellDetailState } from "../Context/SellDetailProvider";
 import { StatusBar } from "expo-status-bar";
+import { Alert } from "react-native";
 
 const Details = ({ route, navigation }) => {
   // const [brand, setBrand] = useState("");
@@ -45,6 +46,26 @@ const Details = ({ route, navigation }) => {
   // const { category, setDetail } = sellDetailState();
 
   const next = (nav) => {
+    if (brand == "" && flag != 3) {
+      Alert.alert("Oops", "Enter Valid Brand");
+      return;
+    }
+    if (model == "" && flag != 3) {
+      Alert.alert("Oops", "Enter Valid Model");
+      return;
+    }
+    if (year.toString().length !== 4 && flag != 3) {
+      Alert.alert("Oops", "Enter Valid Year");
+      return;
+    }
+    if (km == 0 && (flag == 0 || flag == 1)) {
+      Alert.alert("Oops", "Enter Valid Kilometers");
+      return;
+    }
+    if (desc.length < 10) {
+      Alert.alert("Oops", "Enter Minimum Description of 10 Characters");
+      return;
+    }
     navigation.navigate(nav);
   };
 
@@ -59,7 +80,7 @@ const Details = ({ route, navigation }) => {
     setBrand("");
     setDesc("");
     setKm();
-    setYear();
+    setYear(0);
     setTitle("");
     setModel("");
     navigation.setOptions({ title: category });
@@ -113,6 +134,7 @@ const Details = ({ route, navigation }) => {
                 style={styles.input}
                 placeholder={"Year*"}
                 value={year}
+                keyboardType="number-pad"
                 onChangeText={(text) => setYear(text)}
               />
             </>
@@ -124,6 +146,7 @@ const Details = ({ route, navigation }) => {
               style={styles.input}
               placeholder={"KM Driven*"}
               value={km}
+              keyboardType="number-pad"
               onChangeText={(text) => setKm(text)}
             />
           ) : (
@@ -141,6 +164,9 @@ const Details = ({ route, navigation }) => {
             value={desc}
             onChangeText={(text) => setDesc(text)}
           />
+          <Text style={{ marginTop: -20, marginLeft: 20, marginBottom: 10 }}>
+            minimum 10 character
+          </Text>
           <TouchableOpacity style={styles.btn} onPress={() => next("Image")}>
             <Text style={{ fontWeight: "bold", color: "#fff" }}>Next</Text>
           </TouchableOpacity>

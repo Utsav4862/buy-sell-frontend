@@ -15,20 +15,18 @@ import { Avatar } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
-import Messages from "../Components/Messages";
+
 import { getTkn } from "../Functions/token";
 import axios from "axios";
 import { URL } from "../API/api";
 import { io } from "socket.io-client";
 
 const ENDPOINT = URL;
-let socket;
+let socket, selectedChatCompare;
 const Message = ({ navigation }) => {
-  const { selectedChat, user } = InfoState();
+  const { selectedChat, user, setNotifications, notifications } = InfoState();
   const [message, setMessage] = useState();
   const [messages, setMessages] = useState([]);
-
-  const flatRef = useRef();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -110,9 +108,13 @@ const Message = ({ navigation }) => {
   }, []);
   useEffect(() => {
     fetchMessages();
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
+  // console.log(notifications.length);
   useEffect(() => {
     socket.on("message received", (newMessageReceived) => {
+      // console.log(newMessageReceived, "new");
+
       setMessages([...messages, newMessageReceived]);
     });
   });
@@ -147,6 +149,8 @@ const Message = ({ navigation }) => {
             onChangeText={(text) => setMessage(text)}
             style={styles.input}
             autoFocus={true}
+            returnKeyType="send"
+            onEndEditing={sendMessage}
           />
 
           <TouchableOpacity onPress={sendMessage}>
@@ -164,6 +168,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    marginRight: 10,
+    marginLeft: 10,
+    marginBottom: 10,
   },
   profile_img: {
     position: "absolute",
@@ -194,22 +201,25 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     width: "90%",
-    height: 35,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
-    // padding: 15,
     bottom: 10,
     position: "absolute",
+    paddingTop: 5,
+    borderTopWidth: 0.5,
+    borderColor: "gray",
+    width: "100%",
   },
 
   input: {
     // width: "90%",
-    height: 35,
+    height: 40,
     flex: 1,
     marginLeft: 10,
     marginRight: 15,
     backgroundColor: "lightgray",
-    borderRadius: 15,
+    borderRadius: 10,
     padding: 10,
   },
   msgContainer: {

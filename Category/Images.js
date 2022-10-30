@@ -16,6 +16,10 @@ const Images = ({ route, navigation }) => {
   const { images, setImages } = sellDetailState();
 
   const next = (nav) => {
+    if (images.length == 0) {
+      Alert.alert("Oops", "Please Upload at least one photo ");
+      return;
+    }
     navigation.navigate(nav);
   };
 
@@ -52,6 +56,17 @@ const Images = ({ route, navigation }) => {
   return (
     <View style={styles.main}>
       <View style={styles.mainContainer}>
+        <Text
+          style={{
+            marginTop: -20,
+            marginLeft: 20,
+            marginBottom: 10,
+            color: "#2abe6c",
+            fontWeight: "bold",
+          }}
+        >
+          Multiple Images are allowed*
+        </Text>
         <View style={styles.img}>
           {images.length > 1 ? (
             <View style={{ width: "100%", height: 300 }}>

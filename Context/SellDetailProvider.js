@@ -13,8 +13,8 @@ const SellDetailProvider = ({ children }) => {
   const [location, setLocation] = useState("");
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
-  const [year, setYear] = useState();
-  const [km, setKm] = useState();
+  const [year, setYear] = useState(0);
+  const [km, setKm] = useState(0);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   return (

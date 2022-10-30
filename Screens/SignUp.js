@@ -18,22 +18,28 @@ const Signup = ({ navigation }) => {
 
   const signup = () => {
     axios
-      .post(`${URL}/user/signup`, {
+      .post(`${URL}/user/sendEmail`, {
         name: name,
         email: email,
-        password: password,
+        // password: password,
       })
       .then((res) => {
         let data = res.data;
-        if (data.exist) {
-          Alert.alert("Error", data.exist, [
-            { text: "Login", onPress: () => navigation.navigate("Login") },
+        console.log(data);
+        if (data.error) {
+          Alert.alert("Error", data.error, [
+            // { text: "Login", onPress: () => navigation.navigate("Login") },
             { text: "Ok" },
           ]);
         } else {
-          Alert.alert("Success", "Registration Done!!!", [
-            { text: "Login Now", onPress: () => navigation.navigate("Login") },
-          ]);
+          navigation.navigate("OTP", {
+            name: name,
+            email: email,
+            veriOtp: data.otp,
+          });
+          // Alert.alert("Success", "Registration Done!!!", [
+          //   { text: "Login Now", onPress: () => navigation.navigate("Login") },
+          // ]);
         }
         // console.log(res);
       });
@@ -58,17 +64,17 @@ const Signup = ({ navigation }) => {
             value={email}
             onChangeText={(text) => setEmail(text)}
           />
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             placeholder={"Password"}
             secureTextEntry
             value={password}
             onChangeText={(text) => setPassword(text)}
-          />
+          /> */}
         </View>
 
         <TouchableOpacity style={styles.btn} onPress={signup}>
-          <Text style={{ color: "#fff", fontWeight: "bold" }}>Sign Up</Text>
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>Next</Text>
         </TouchableOpacity>
 
         <View style={styles.bottom}>

@@ -9,17 +9,27 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import GetCurrentLocation from "../Functions/Location";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { InfoState } from "../Context/InfoProvider";
 import { Categories } from "../data/categoryData";
 import axios from "axios";
 import { URL } from "../API/api";
 import { getTkn } from "../Functions/token";
+import ProductView from "../Components/ProductView";
+import { useFocusEffect } from "@react-navigation/native";
+import { RefreshControl } from "react-native";
 
 const Home = ({ navigation }) => {
-  const { currLocation, setCurrLocation, cat, setCat, setUser } = InfoState();
+  const {
+    currLocation,
+    setCurrLocation,
+    notifications,
+    setCat,
+    setUser,
+    user,
+  } = InfoState();
 
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +50,6 @@ const Home = ({ navigation }) => {
         },
       };
       axios.get(`${URL}/user/currentUser`, config).then((res) => {
-        console.log(res.data);
         setUser(res.data);
       });
     });
@@ -71,10 +80,15 @@ const Home = ({ navigation }) => {
   };
 
   useEffect(() => {
+    getLoggedUser();
     getLocation();
     getAllProducts();
+
     setCat("");
-    getLoggedUser();
+  }, []);
+
+  useEffect(() => {
+    console.log(notifications.length);
   }, []);
   return (
     <View
@@ -111,6 +125,7 @@ const Home = ({ navigation }) => {
               : ` ${currLocation.district}, ${currLocation.city}`}
           </Text>
         </TouchableOpacity>
+        <RefreshControl onRefresh={getAllProducts} />
         <TouchableWithoutFeedback onPress={() => navigation.navigate("Search")}>
           <Ionicons
             name="search"
@@ -157,67 +172,14 @@ const Home = ({ navigation }) => {
 
           <View style={styles.products}>
             <Text style={{ fontWeight: "bold", fontSize: 18, marginLeft: 15 }}>
-              All Products
+              All Ads
             </Text>
-
-            <View style={styles.cardContainer}>
-              {products.map((prod) => (
-                <TouchableHighlight
-                  onPress={() =>
-                    navigation.navigate("Product", { product: prod })
-                  }
-                  underlayColor={"#f0f0f0"}
-                  style={styles.card}
-                  key={prod._id}
-                >
-                  <View>
-                    <View style={styles.img}>
-                      <Image
-                        source={{
-                          uri: prod.images[0],
-                        }}
-                        style={{
-                          width: "90%",
-                          height: 100,
-                          resizeMode: "contain",
-                        }}
-                      />
-                    </View>
-                    <View style={styles.cardDetails}>
-                      <Text>{prod.title}</Text>
-                      <Text
-                        style={{
-                          fontSize: 15,
-                          marginTop: 5,
-                          fontWeight: "bold",
-                        }}
-                      >
-                        <FontAwesome name="rupee" size={15} /> {prod.price}
-                      </Text>
-                      {prod.category == "Car" || prod.category == "Bike" ? (
-                        <Text style={{ marginTop: 5 }}>
-                          {prod.year} - {prod.km} km
-                        </Text>
-                      ) : (
-                        ""
-                      )}
-                      <Text
-                        style={{
-                          color: "gray",
-                          position: "absolute",
-                          bottom: 5,
-                        }}
-                      >
-                        <Ionicons name="location" size={12} />{" "}
-                        {prod.location.length > 15
-                          ? prod.location.slice(0, 15) + "..."
-                          : prod.location}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableHighlight>
-              ))}
-            </View>
+            <ProductView
+              products={products}
+              setProducts={setProducts}
+              navigation={navigation}
+              user={user}
+            />
           </View>
         </ScrollView>
       </View>

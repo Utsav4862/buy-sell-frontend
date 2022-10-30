@@ -13,9 +13,10 @@ import { sellDetailState } from "../Context/SellDetailProvider";
 import axios from "axios";
 import { URL } from "../API/api";
 import { getTkn } from "../Functions/token";
+import GetCurrentLocation from "../Functions/Location";
 
 const Location = ({ route, navigation }) => {
-  const { currLocation } = InfoState();
+  const { currLocation, setCurrLocation } = InfoState();
   const {
     category,
     brand,
@@ -60,15 +61,10 @@ const Location = ({ route, navigation }) => {
     return formData;
   };
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
   const Post = () => {
+    if (location == "") {
+      Alert.alert("Oops", "Select Location");
+    }
     setIsLoading(true);
 
     setIsLoading(false);
@@ -104,7 +100,15 @@ const Location = ({ route, navigation }) => {
   };
   return (
     <View style={styles.mainContainer}>
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => {
+          GetCurrentLocation().then((res) => {
+            setCurrLocation(res);
+            setLocation(`${res.district},${res.city}`);
+          });
+        }}
+      >
         <View style={styles.cardDetails}>
           <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 5 }}>
             Your Current Location (Default)

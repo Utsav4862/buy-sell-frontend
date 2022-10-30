@@ -14,6 +14,7 @@ import {
 } from "@react-navigation/stack";
 import ProductScreen from "../Screens/ProductScreen";
 import Message from "../Screens/Message";
+import Password from "../Screens/Password";
 
 const Stack = createStackNavigator();
 
@@ -62,6 +63,7 @@ const StackNavigation = () => {
         }}
       />
       <Stack.Screen name="OTP" component={OtpScreen} />
+      <Stack.Screen name="Password" component={Password} />
       <Stack.Screen
         name="Message"
         component={Message}

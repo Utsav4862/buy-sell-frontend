@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { sellDetailState } from "../Context/SellDetailProvider";
 import { InfoState } from "../Context/InfoProvider";
+import { Alert } from "react-native";
 
 const Price = ({ route, navigation }) => {
   const { currLocation } = InfoState();
@@ -16,11 +17,17 @@ const Price = ({ route, navigation }) => {
     sellDetailState();
 
   const next = (nav) => {
+    if (price == 0) {
+      Alert.alert("Oops", "Enter Valid Price");
+      return;
+    }
     navigation.navigate(nav);
     if (currLocation != undefined) {
       let tempLoc = `${currLocation.district}, ${currLocation.city}`;
       console.log(tempLoc, "temp");
       setLocation(tempLoc);
+    } else {
+      setLocation("");
     }
   };
 
@@ -76,6 +83,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginLeft: 7,
+    width: "100%",
   },
 
   btn: {

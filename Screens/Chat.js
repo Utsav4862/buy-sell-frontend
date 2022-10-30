@@ -5,7 +5,7 @@ import {
   TouchableHighlight,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
@@ -15,11 +15,11 @@ import { URL } from "../API/api";
 import { InfoState } from "../Context/InfoProvider";
 import { loggedUser } from "../Functions/LoggedUser";
 import { Avatar } from "react-native-elements";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Chat = ({ navigation }) => {
-  // const [chat, setChats] = useState([]);
-  const { chats, setChats, user, selectedChat, setSelectedChat } = InfoState();
-  const [c, setC] = useState([]);
+  const { chats, setChats, user, setSelectedChat, notifications } = InfoState();
+
   const fetchChats = () => {
     getTkn().then((tkn) => {
       let config = {
@@ -38,14 +38,16 @@ const Chat = ({ navigation }) => {
     setSelectedChat(chat);
     navigation.navigate("Message");
   };
-
-  useEffect(() => {
-    fetchChats();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchChats();
+    }, [])
+  );
+  useEffect(() => {}, []);
 
   return (
     <View style={styles.container}>
-      <SafeAreaView>
+      <SafeAreaView style={{ marginBottom: 50 }}>
         <View style={styles.header}>
           <Text style={styles.headerTxt}>Chat</Text>
         </View>
