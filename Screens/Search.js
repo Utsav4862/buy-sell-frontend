@@ -26,6 +26,8 @@ const Search = ({ route, navigation }) => {
   const [search, setSearch] = useState("");
   const [flag, setFlag] = useState(false);
   const [focus, setFocus] = useState(false);
+  const [focus2, setFocus2] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [loc, setLoc] = useState(
     currLocation.district + ", " + currLocation.city
@@ -50,7 +52,7 @@ const Search = ({ route, navigation }) => {
 
   useEffect(() => {
     console.log(search);
-    if (!focus) searchItems();
+    if (!focus && !focus2) searchItems();
   }, [search]);
   useEffect(() => {
     console.log(flag);
@@ -61,6 +63,7 @@ const Search = ({ route, navigation }) => {
       const { cat } = route.params;
       setSearch(cat);
       setFocus(false);
+      setFocus2(false);
     } else {
       setFlag(false);
       setSearch("");
@@ -129,7 +132,7 @@ const Search = ({ route, navigation }) => {
               onChangeText={(text) => setLoc(text)}
               onBlur={searchItems}
               returnKeyType="search"
-              onFocus={() => setFocus(true)}
+              onFocus={() => setFocus2(true)}
             />
           </View>
         </View>
@@ -137,7 +140,7 @@ const Search = ({ route, navigation }) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.resultContainer}
         >
-          {flag ? (
+          {flag && !focus && !focus2 ? (
             <View>
               <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                 {searchProducts.length} result found in {loc}
