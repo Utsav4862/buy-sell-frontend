@@ -1,6 +1,8 @@
 import {
   ActivityIndicator,
+  Alert,
   Image,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,7 +22,10 @@ import { getTkn } from "../Functions/token";
 import ProductView from "../Components/ProductView";
 import { useFocusEffect } from "@react-navigation/native";
 import { RefreshControl } from "react-native";
-
+import { loggedUser } from "../API/userApi";
+import { Err } from "../Functions/Error";
+import { fetchProducts } from "../API/productApi";
+// import {} from "react-native-permission"
 const Home = ({ navigation }) => {
   const {
     currLocation,
@@ -29,30 +34,37 @@ const Home = ({ navigation }) => {
     setCat,
     setUser,
     user,
+    per,
+    setPer,
   } = InfoState();
 
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  // const [] = useState(true);
 
   const getLocation = () => {
     GetCurrentLocation().then((res) => {
+      if (res.status == false) {
+        setPer(false);
+        return;
+      }
       setCurrLocation(res);
+      setPer(true);
       console.log(res);
     });
   };
 
-  const getLoggedUser = () => {
-    getTkn().then((tkn) => {
-      let config = {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${tkn}`,
-        },
-      };
-      axios.get(`${URL}/user/currentUser`, config).then((res) => {
-        setUser(res.data);
+  const getLoggedUser = async () => {
+    try {
+      getTkn().then(async (tkn) => {
+        let data = await loggedUser(tkn);
+
+        setUser(data);
       });
-    });
+    } catch (error) {
+      Err();
+    }
   };
 
   const selectCat = (cat) => {
@@ -62,70 +74,70 @@ const Home = ({ navigation }) => {
       cat: cat.name,
     });
   };
-  const getAllProducts = () => {
-    setIsLoading(true);
-    getTkn().then((tkn) => {
-      let config = {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${tkn}`,
-        },
-      };
-      axios.get(`${URL}/product/all`, config).then((res) => {
-        // console.log(res.data);
-        setProducts(res.data);
-        setIsLoading(false);
-      });
-    });
+  const getAllProducts = async () => {
+    setRefreshing(true);
+    try {
+      let data = await fetchProducts();
+
+      setProducts(data);
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+      Err();
+    }
+  };
+
+  const locAfterDenied = () => {
+    if (!per) {
+      Alert.alert(
+        "Permission",
+        "Please Give a Location Permissions from app Settings",
+        [
+          {
+            text: "Not now",
+          },
+          {
+            text: "Go to Settings",
+            onPress: () => Linking.openSettings(),
+          },
+        ]
+      );
+    } else {
+      getLocation();
+    }
   };
 
   useEffect(() => {
     getLoggedUser();
     getLocation();
-    getAllProducts();
-
     setCat("");
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      getAllProducts();
+    }, [])
+  );
   useEffect(() => {
     console.log(notifications.length);
   }, []);
   return (
-    <View
-      style={[
-        styles.mainContainer,
-        isLoading
-          ? { backgroundColor: "#fafafa", opacity: 0.3 }
-          : { opacity: 1 },
-      ]}
-    >
-      {isLoading ? (
-        <View
-          style={{
-            flex: 1,
-            position: "absolute",
-            top: "50%",
-            left: "45%",
-            zIndex: 2,
-          }}
-        >
-          {isLoading && (
-            <ActivityIndicator color={"rgb(40, 140, 34)"} size="large" />
-          )}
-        </View>
-      ) : (
-        ""
-      )}
+    <View style={styles.mainContainer}>
       <View style={styles.location}>
-        <TouchableOpacity style={{}}>
-          <Text style={styles.locText}>
-            <Ionicons name="location" size={18} />
-            {!currLocation
-              ? " Loading..."
-              : ` ${currLocation.district}, ${currLocation.city}`}
-          </Text>
+        <TouchableOpacity
+          style={{ flexDirection: "row", alignItems: "center" }}
+          onPress={locAfterDenied}
+        >
+          <Ionicons name="location" size={18} color={"#bf8801"} />
+          <View style={{ marginLeft: 10 }}>
+            <Text style={{ fontWeight: "bold" }}>Location</Text>
+            <Text style={styles.locText}>
+              {!per || !currLocation
+                ? "Select your Location"
+                : `${currLocation.district}, ${currLocation.city}`}
+            </Text>
+          </View>
         </TouchableOpacity>
-        <RefreshControl onRefresh={getAllProducts} />
         <TouchableWithoutFeedback onPress={() => navigation.navigate("Search")}>
           <Ionicons
             name="search"
@@ -134,8 +146,19 @@ const Home = ({ navigation }) => {
           />
         </TouchableWithoutFeedback>
       </View>
+
       <View style={styles.innerWrapper}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={getAllProducts && getLocation}
+              colors={["rgb(40, 140, 34)", "#bf8801"]}
+              tintColor={"#bf8801"}
+            />
+          }
+        >
           {/* <SearchBar platform="android" placeholder="From" lightTheme /> */}
 
           <View style={styles.categoryContainer}>
@@ -179,6 +202,7 @@ const Home = ({ navigation }) => {
               setProducts={setProducts}
               navigation={navigation}
               user={user}
+              refreshing={refreshing}
             />
           </View>
         </ScrollView>
@@ -214,7 +238,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     elevation: 1.5,
-    height: 90,
+    height: 100,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     paddingTop: 50,
@@ -226,6 +250,7 @@ const styles = StyleSheet.create({
   locText: {
     fontWeight: "bold",
     fontSize: 16,
+    color: "gray",
   },
   input: {
     marginLeft: 7,

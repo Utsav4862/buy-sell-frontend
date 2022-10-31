@@ -16,38 +16,36 @@ import { URL } from "../API/api";
 import { getTkn } from "../Functions/token";
 import { TabRouter } from "@react-navigation/native";
 import { InfoState } from "../Context/InfoProvider";
+import { Alert } from "react-native";
+import Loader from "../Components/Loader";
+import { searchProd } from "../API/productApi";
+import { Err } from "../Functions/Error";
 
 const Search = ({ route, navigation }) => {
   const { currLocation } = InfoState();
   const [search, setSearch] = useState("");
   const [flag, setFlag] = useState(false);
   const [focus, setFocus] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [loc, setLoc] = useState(
     currLocation.district + ", " + currLocation.city
   );
   const input = useRef();
   const [searchProducts, setSearchProducts] = useState([]);
   let location;
-  const searchItems = () => {
+  const searchItems = async () => {
     if (search == "") return;
-    getTkn().then((tkn) => {
-      let config = {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${tkn}`,
-        },
-      };
-      axios
-        .get(
-          `${URL}/product/searchProducts?search=${search}&location=${loc}`,
-          config
-        )
-        .then((res) => {
-          setSearchProducts(res.data);
-          console.log(res.data);
-          setFlag(true);
-        });
-    });
+    setIsLoading(true);
+    try {
+      let data = await searchProd(search, loc);
+      console.log(data, "data");
+      setSearchProducts(data);
+      setFlag(true);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      Err();
+    }
   };
 
   useEffect(() => {
@@ -73,6 +71,7 @@ const Search = ({ route, navigation }) => {
   }, []);
   return (
     <View style={styles.container}>
+      {isLoading ? <Loader /> : ""}
       <SafeAreaView style={{ marginBottom: 105 }}>
         <View
           style={{
@@ -218,7 +217,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     width: "100%",
-    // bottom: 50,
   },
 
   input: {

@@ -10,43 +10,44 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { URL } from "../API/api";
+import Loader from "../Components/Loader";
+import { sendEmail } from "../API/userApi";
+import { Err } from "../Functions/Error";
 
 const Signup = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const signup = () => {
-    axios
-      .post(`${URL}/user/sendEmail`, {
-        name: name,
-        email: email,
-        // password: password,
-      })
-      .then((res) => {
-        let data = res.data;
-        console.log(data);
-        if (data.error) {
-          Alert.alert("Error", data.error, [
-            // { text: "Login", onPress: () => navigation.navigate("Login") },
-            { text: "Ok" },
-          ]);
-        } else {
-          navigation.navigate("OTP", {
-            name: name,
-            email: email,
-            veriOtp: data.otp,
-          });
-          // Alert.alert("Success", "Registration Done!!!", [
-          //   { text: "Login Now", onPress: () => navigation.navigate("Login") },
-          // ]);
-        }
-        // console.log(res);
-      });
+  const signup = async () => {
+    if (email == "" || !email.includes("@")) {
+      Alert.alert("Invalid", "Enter Valid Detail");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      let res = await sendEmail(email, name);
+      if (res.error) {
+        setIsLoading(false);
+        Alert.alert("Error", res.error, [{ text: "Ok" }]);
+      } else {
+        setIsLoading(false);
+        navigation.navigate("OTP", {
+          name: name,
+          email: email,
+          veriOtp: res.otp,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+      Err();
+    }
   };
 
   return (
     <View style={styles.mainContainer}>
+      {isLoading ? <Loader /> : ""}
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Create a new account</Text>
@@ -64,13 +65,6 @@ const Signup = ({ navigation }) => {
             value={email}
             onChangeText={(text) => setEmail(text)}
           />
-          {/* <TextInput
-            style={styles.input}
-            placeholder={"Password"}
-            secureTextEntry
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-          /> */}
         </View>
 
         <TouchableOpacity style={styles.btn} onPress={signup}>

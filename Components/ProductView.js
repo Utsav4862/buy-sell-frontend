@@ -1,37 +1,53 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { TouchableHighlight } from "react-native";
 import { Image } from "react-native";
-import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
-import { getTkn } from "../Functions/token";
-import axios from "axios";
-import { URL } from "../API/api";
+import {
+  AntDesign,
+  FontAwesome,
+  Ionicons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
+import { delProd, likeUnlikeProd } from "../API/productApi";
+import { Err } from "../Functions/Error";
 
-const ProductView = ({ products, navigation, setProducts, user }) => {
-  const likeUnlikeProduct = (prod, i, value) => {
-    getTkn().then(async (tkn) => {
-      let config = {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${tkn}`,
-        },
-      };
-
-      let { data } = await axios.put(
-        `${URL}/product/${value}`,
-        {
-          productId: prod._id,
-        },
-        config
-      );
-
-      console.log(data);
+const ProductView = ({
+  products,
+  navigation,
+  setProducts,
+  user,
+  flag,
+  refreshing,
+}) => {
+  const likeUnlikeProduct = async (prod, i, value) => {
+    try {
+      let body = { productId: prod._id };
+      let data = await likeUnlikeProd(value, body);
       let temp = [...products];
       temp[i] = data;
       setProducts(temp);
-    });
+    } catch (error) {
+      console.log(error);
+      Err();
+    }
   };
+
+  const deleteProduct = async (productId, i) => {
+    try {
+      let data = await delProd(productId);
+      let temp = products.filter((item) => item._id !== data._id);
+
+      setProducts(temp);
+    } catch (error) {
+      console.log(error);
+      Err();
+    }
+  };
+
+  useEffect(() => {
+    setProducts(products);
+  }, [products]);
   return (
     <View style={styles.cardContainer}>
       {products.map((prod, i) => (
@@ -67,6 +83,16 @@ const ProductView = ({ products, navigation, setProducts, user }) => {
                   color={prod.likes.includes(user._id) ? "red" : "black"}
                 />
               </TouchableOpacity>
+              {flag == true ? (
+                <TouchableOpacity
+                  style={styles.delete}
+                  onPress={() => deleteProduct(prod._id, i)}
+                >
+                  <MaterialIcons name="delete" size={25} color="#1d9bf0" />
+                </TouchableOpacity>
+              ) : (
+                ""
+              )}
             </View>
             <View style={styles.cardDetails}>
               <Text>{prod.title}</Text>
@@ -122,7 +148,7 @@ const styles = StyleSheet.create({
 
   card: {
     margin: 5,
-    height: 250,
+    height: 200,
     width: "47%",
     backgroundColor: "#fff",
     borderWidth: 2,
@@ -142,5 +168,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     height: "50%",
     width: "90%",
+  },
+  delete: {
+    position: "absolute",
+    top: 5,
+    left: 5,
   },
 });

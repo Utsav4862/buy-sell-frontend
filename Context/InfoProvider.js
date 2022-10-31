@@ -12,6 +12,7 @@ const InfoProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
 
   const [chats, setChats] = useState([]);
+  const [per, setPer] = useState(true);
 
   return (
     <InfoContext.Provider
@@ -30,6 +31,8 @@ const InfoProvider = ({ children }) => {
         setUser,
         notifications,
         setNotifications,
+        per,
+        setPer,
       }}
     >
       {children}

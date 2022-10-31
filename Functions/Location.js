@@ -2,7 +2,7 @@ import * as Location from "expo-location";
 import { Alert } from "react-native";
 const GetCurrentLocation = async () => {
   let { status } = await Location.requestForegroundPermissionsAsync();
-
+  console.log(status);
   if (status !== "granted") {
     Alert.alert(
       "Permission not granted",
@@ -10,7 +10,7 @@ const GetCurrentLocation = async () => {
       [{ text: "OK" }],
       { cancelable: true }
     );
-    return;
+    return { status: false };
   }
 
   let { coords } = await Location.getCurrentPositionAsync();

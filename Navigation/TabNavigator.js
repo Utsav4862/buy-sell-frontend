@@ -10,7 +10,6 @@ import AddStackNavigation from "./AddStackNavigation";
 import {
   AntDesign,
   Entypo,
-  Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";

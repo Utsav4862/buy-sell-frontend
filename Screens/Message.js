@@ -20,6 +20,8 @@ import { getTkn } from "../Functions/token";
 import axios from "axios";
 import { URL } from "../API/api";
 import { io } from "socket.io-client";
+import { getMessages, sendMsg } from "../API/chatApi";
+import { Err } from "../Functions/Error";
 
 const ENDPOINT = URL;
 let socket, selectedChatCompare;
@@ -59,62 +61,47 @@ const Message = ({ navigation }) => {
     });
   }, []);
 
-  const fetchMessages = () => {
-    getTkn().then((tkn) => {
-      let config = {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${tkn}`,
-        },
-      };
-
-      axios
-        .get(`${URL}/message/all/${selectedChat._id}`, config)
-        .then((res) => {
-          setMessages(res.data);
-          socket.emit("join chat", selectedChat._id);
-        });
-    });
+  const fetchMessages = async () => {
+    try {
+      let data = await getMessages(selectedChat._id);
+      setMessages(data);
+      socket.emit("join chat", selectedChat._id);
+    } catch (error) {
+      console.log(error);
+      Err();
+    }
   };
 
-  const sendMessage = () => {
-    getTkn().then(async (tkn) => {
-      let config = {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${tkn}`,
-        },
-      };
-
+  const sendMessage = async () => {
+    try {
       let body = {
         content: message,
         chatId: selectedChat._id,
       };
 
-      let { data } = await axios.post(`${URL}/message/send`, body, config);
+      let data = await sendMsg(body);
       socket.emit("new message", data);
       setMessages([...messages, data]);
-    });
-    setMessage("");
+
+      setMessage("");
+    } catch (error) {
+      console.log(error);
+      Err();
+    }
   };
-  //   const socket = useRef()
 
   useEffect(() => {
     socket = io("http://192.168.1.7:5555");
     socket.emit("setup", user);
 
     socket.on("connected", () => console.log("connected"));
-    // eslint-disable-next-line
   }, []);
   useEffect(() => {
     fetchMessages();
-    selectedChatCompare = selectedChat;
   }, [selectedChat]);
-  // console.log(notifications.length);
+
   useEffect(() => {
     socket.on("message received", (newMessageReceived) => {
-      // console.log(newMessageReceived, "new");
-
       setMessages([...messages, newMessageReceived]);
     });
   });
@@ -228,6 +215,7 @@ const styles = StyleSheet.create({
     // marginBottom: 5,
     borderRadius: 10,
     maxWidth: "75%",
+    elevation: 1,
   },
   left: {
     backgroundColor: "#cef8c7",

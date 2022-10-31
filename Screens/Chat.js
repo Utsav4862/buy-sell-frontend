@@ -16,22 +16,26 @@ import { InfoState } from "../Context/InfoProvider";
 import { loggedUser } from "../Functions/LoggedUser";
 import { Avatar } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
+import { Alert } from "react-native";
+import { Err } from "../Functions/Error";
+import Loader from "../Components/Loader";
+import { getChats } from "../API/chatApi";
 
 const Chat = ({ navigation }) => {
-  const { chats, setChats, user, setSelectedChat, notifications } = InfoState();
+  const { chats, setChats, user, setSelectedChat } = InfoState();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchChats = () => {
-    getTkn().then((tkn) => {
-      let config = {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${tkn}`,
-        },
-      };
-      axios.get(`${URL}/chat/fetch`, config).then((res) => {
-        setChats(res.data);
-      });
-    });
+  const fetchChats = async () => {
+    // setIsLoading(true);
+    try {
+      let data = await getChats();
+      // setIsLoading(false);
+      console.log(data);
+      setChats(data);
+    } catch (error) {
+      // setIsLoading(false);
+      Err();
+    }
   };
 
   const selectChat = (chat) => {
@@ -47,7 +51,8 @@ const Chat = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={{ marginBottom: 50 }}>
+      {isLoading ? <Loader /> : ""}
+      <SafeAreaView style={{ marginBottom: 62 }}>
         <View style={styles.header}>
           <Text style={styles.headerTxt}>Chat</Text>
         </View>
@@ -126,6 +131,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,
+    marginBottom: 10,
   },
   input: {
     height: 40,

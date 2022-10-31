@@ -5,29 +5,38 @@ import { getTkn } from "../Functions/token";
 import axios from "axios";
 import { URL } from "../API/api";
 import { ScrollView } from "react-native-gesture-handler";
-import { Image } from "react-native";
-import { TouchableOpacity } from "react-native";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import ProductView from "../Components/ProductView";
 import { InfoState } from "../Context/InfoProvider";
 import { useFocusEffect } from "@react-navigation/native";
+import { Err } from "../Functions/Error";
 
 const MyAds = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const { user } = InfoState();
+  const [isLoading, setIsLoading] = useState(false);
 
   const getLikedProducts = () => {
-    getTkn().then(async (tkn) => {
-      let config = {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${tkn}`,
-        },
-      };
-      let { data } = await axios.get(`${URL}/product/likedProd`, config);
-      console.log(data);
-      setProducts(data);
-    });
+    try {
+      getTkn()
+        .then(async (tkn) => {
+          let config = {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${tkn}`,
+            },
+          };
+          let { data } = await axios.get(`${URL}/product/likedProd`, config);
+          console.log(data);
+          setProducts(data);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          Err();
+        });
+    } catch (error) {
+      setIsLoading(false);
+      Err();
+    }
   };
   useEffect(() => {}, []);
   useFocusEffect(
@@ -37,13 +46,11 @@ const MyAds = ({ navigation }) => {
   );
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <SafeAreaView>
+      <SafeAreaView style={{ marginBottom: 65 }}>
         <View style={styles.header}>
           <Text style={styles.headerTxt}>Your Liked Ads</Text>
         </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {/* <SearchBar platform="android" placeholder="From" lightTheme /> */}
-
+        <ScrollView showsVerticalScrollIndicator={true}>
           <View style={styles.products}>
             <ProductView
               products={products}
@@ -64,6 +71,7 @@ const styles = StyleSheet.create({
   header: {
     marginTop: 20,
     marginLeft: 20,
+    marginBottom: 10,
   },
   headerTxt: {
     fontSize: 32,

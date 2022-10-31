@@ -14,9 +14,14 @@ import axios from "axios";
 import { URL } from "../API/api";
 import { getTkn } from "../Functions/token";
 import GetCurrentLocation from "../Functions/Location";
+import { Alert } from "react-native";
+import { Linking } from "react-native";
+import Loader from "../Components/Loader";
+import { addProd } from "../API/productApi";
+import { Err } from "../Functions/Error";
 
 const Location = ({ route, navigation }) => {
-  const { currLocation, setCurrLocation } = InfoState();
+  const { currLocation, setCurrLocation, per, setPer } = InfoState();
   const {
     category,
     brand,
@@ -61,13 +66,12 @@ const Location = ({ route, navigation }) => {
     return formData;
   };
 
-  const Post = () => {
+  const Post = async () => {
     if (location == "") {
       Alert.alert("Oops", "Select Location");
+      return;
     }
     setIsLoading(true);
-
-    setIsLoading(false);
 
     let body = {
       category,
@@ -81,34 +85,67 @@ const Location = ({ route, navigation }) => {
       subCat,
       location,
     };
-    let data = createFormData(body);
-    getTkn().then((tkn) => {
-      console.log(location);
-      let config = {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${tkn}`,
-        },
-      };
-
-      axios.post(`${URL}/product/add`, data, config).then((res) => {
-        console.log(res.data);
+    let data = await createFormData(body);
+    try {
+      getTkn().then((tkn) => {
+        console.log(location);
+        let config = {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${tkn}`,
+          },
+        };
+        let resp = addProd(data, config);
+        setIsLoading(false);
+        Alert.alert("Congratulations!!", "Your ad has been posted", [
+          { text: "ok", onPress: () => navigation.navigate("Home") },
+        ]);
       });
-    });
-    // navigation.navigate("Home");
+    } catch (error) {
+      console.log(error);
+      Err();
+    }
   };
+  const getLocation = () => {
+    GetCurrentLocation().then((res) => {
+      console.log(res);
+      if (res.status == false) {
+        setPer(false);
+        return;
+      }
+      setPer(true);
+      setCurrLocation(res);
+      setLocation(`${res.district},${res.city}`);
+    });
+  };
+  const locAfterDenied = () => {
+    console.log(per);
+    if (!per) {
+      Alert.alert(
+        "Permission",
+        "Please Give a Location Permissions from App Settings",
+        [
+          {
+            text: "Not now",
+          },
+          {
+            text: "Go to Settings",
+            onPress: () => Linking.openSettings(),
+          },
+        ]
+      );
+    } else {
+      getLocation();
+    }
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
   return (
-    <View style={styles.mainContainer}>
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() => {
-          GetCurrentLocation().then((res) => {
-            setCurrLocation(res);
-            setLocation(`${res.district},${res.city}`);
-          });
-        }}
-      >
+    <View style={[styles.mainContainer]}>
+      <TouchableOpacity style={styles.card} onPress={locAfterDenied}>
         <View style={styles.cardDetails}>
           <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 5 }}>
             Your Current Location (Default)
@@ -116,7 +153,7 @@ const Location = ({ route, navigation }) => {
 
           <Text style={{ fontWeight: "700", width: "100%", color: "#1d9bf0" }}>
             <Ionicons name="location" size={15} />
-            {currLocation != undefined
+            {currLocation != undefined && per == true
               ? `${currLocation.district},${currLocation.city}`
               : "Select current Location"}
           </Text>
@@ -143,6 +180,7 @@ const Location = ({ route, navigation }) => {
       <TouchableOpacity style={styles.btn} onPress={Post}>
         <Text style={{ fontWeight: "bold", color: "#fff" }}>Post a Ad</Text>
       </TouchableOpacity>
+      {isLoading ? <Loader /> : ""}
     </View>
   );
 };

@@ -6,31 +6,27 @@ import { TouchableOpacity } from "react-native";
 import axios from "axios";
 import { URL } from "../API/api";
 import { Alert } from "react-native";
+import { signupUser } from "../API/userApi";
+import { Err } from "../Functions/Error";
 
 const Password = ({ route, navigation }) => {
   const [password, setPassword] = useState();
   const { name, email } = route.params;
 
-  const signup = () => {
+  const signup = async () => {
     console.log(password);
-    axios
-      .post(`${URL}/user/signup`, {
-        name: name,
-        email: email,
-        password: password,
-      })
-      .then((res) => {
-        let data = res.data;
-        console.log(data);
-        if (data.success) {
-          Alert.alert("Congratulations!!", "Registration Done", [
-            { text: "Login Now", onPress: () => navigation.navigate("Login") },
-          ]);
-        }
-      })
-      .catch((err) => {
-        Alert.alert("Oops!!", "Some Error occurred");
-      });
+    try {
+      let data = await signupUser(name, email, password);
+      console.log(data);
+      if (data.success) {
+        Alert.alert("Congratulations!!", "Registration Done", [
+          { text: "Login Now", onPress: () => navigation.navigate("Login") },
+        ]);
+      }
+    } catch (error) {
+      console.log(error);
+      Err();
+    }
   };
   return (
     <View style={styles.mainContainer}>
