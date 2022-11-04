@@ -238,6 +238,7 @@ const styles = StyleSheet.create({
   descTxt: {
     marginTop: 5,
     fontWeight: "700",
+    marginRight: 8,
   },
   bottom: {
     position: "absolute",

@@ -64,6 +64,11 @@ const Details = ({ route, navigation }) => {
       Alert.alert("Oops", "Enter Valid Kilometers");
       return;
     }
+
+    if (title == "") {
+      Alert.alert("Oops", "Please Provide Valid Ad Title!!");
+      return;
+    }
     if (desc.length < 10) {
       Alert.alert("Oops", "Enter Minimum Description of 10 Characters");
       return;

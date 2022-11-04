@@ -126,7 +126,11 @@ const Search = ({ route, navigation }) => {
               style={{ fontWeight: "bold", marginRight: 10 }}
             />
             <TextInput
-              defaultValue={currLocation.district + ", " + currLocation.city}
+              defaultValue={
+                currLocation
+                  ? currLocation.district + ", " + currLocation.city
+                  : ""
+              }
               style={styles.input}
               value={loc}
               onChangeText={(text) => setLoc(text)}
@@ -143,7 +147,7 @@ const Search = ({ route, navigation }) => {
           {flag ? (
             <View>
               <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                {searchProducts.length} result found in {loc}
+                {searchProducts.length} result found
               </Text>
               <View style={styles.cardContainer}>
                 {searchProducts.map((prod) => (

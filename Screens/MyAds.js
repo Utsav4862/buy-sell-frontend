@@ -26,7 +26,6 @@ const MyAds = ({ navigation }) => {
             },
           };
           let { data } = await axios.get(`${URL}/product/likedProd`, config);
-          console.log(data);
           setProducts(data);
         })
         .catch((err) => {

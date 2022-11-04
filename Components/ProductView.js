@@ -12,6 +12,7 @@ import { TouchableOpacity } from "react-native";
 import { delProd, likeUnlikeProd } from "../API/productApi";
 import { Err } from "../Functions/Error";
 import { InfoState } from "../Context/InfoProvider";
+import { Alert } from "react-native";
 
 const ProductView = ({ products, navigation, setProducts, flag }) => {
   const { user } = InfoState();
@@ -26,6 +27,13 @@ const ProductView = ({ products, navigation, setProducts, flag }) => {
       console.log(error);
       Err();
     }
+  };
+
+  const delWarning = (product, i) => {
+    Alert.alert("Delete!!", `Are you sure to delete ${product.title} Ad ?`, [
+      { text: "cancel" },
+      { text: "Delete", onPress: () => deleteProduct(product._id, i) },
+    ]);
   };
 
   const deleteProduct = async (productId, i) => {
@@ -77,7 +85,7 @@ const ProductView = ({ products, navigation, setProducts, flag }) => {
               {flag == true ? (
                 <TouchableOpacity
                   style={styles.delete}
-                  onPress={() => deleteProduct(prod._id, i)}
+                  onPress={() => delWarning(prod, i)}
                 >
                   <MaterialIcons name="delete" size={25} color="#1d9bf0" />
                 </TouchableOpacity>
