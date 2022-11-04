@@ -1,47 +1,32 @@
 import {
-  ActivityIndicator,
   Alert,
   Image,
   Linking,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableHighlight,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import GetCurrentLocation from "../Functions/Location";
-import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { InfoState } from "../Context/InfoProvider";
 import { Categories } from "../data/categoryData";
-import axios from "axios";
-import { URL } from "../API/api";
 import { getTkn } from "../Functions/token";
 import ProductView from "../Components/ProductView";
-import { useFocusEffect } from "@react-navigation/native";
 import { RefreshControl } from "react-native";
 import { loggedUser } from "../API/userApi";
 import { Err } from "../Functions/Error";
 import { fetchProducts } from "../API/productApi";
-// import {} from "react-native-permission"
+
 const Home = ({ navigation }) => {
-  const {
-    currLocation,
-    setCurrLocation,
-    notifications,
-    setCat,
-    setUser,
-    user,
-    per,
-    setPer,
-  } = InfoState();
+  const { currLocation, setCurrLocation, setCat, setUser, user, per, setPer } =
+    InfoState();
 
   const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  // const [] = useState(true);
 
   const getLocation = () => {
     GetCurrentLocation().then((res) => {
@@ -76,11 +61,12 @@ const Home = ({ navigation }) => {
   };
   const getAllProducts = async () => {
     setRefreshing(true);
+    console.log("ccc");
     try {
       let data = await fetchProducts();
-
-      setProducts(data);
       setRefreshing(false);
+      setProducts(data);
+      // console.log(data);
     } catch (error) {
       console.log(error);
       Err();
@@ -107,20 +93,18 @@ const Home = ({ navigation }) => {
     }
   };
 
+  const handleRefresh = () => {
+    getAllProducts();
+    getLocation();
+  };
+
   useEffect(() => {
+    getAllProducts();
     getLoggedUser();
     getLocation();
     setCat("");
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      getAllProducts();
-    }, [])
-  );
-  useEffect(() => {
-    console.log(notifications.length);
-  }, []);
   return (
     <View style={styles.mainContainer}>
       <View style={styles.location}>
@@ -153,14 +137,12 @@ const Home = ({ navigation }) => {
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
-              onRefresh={getAllProducts && getLocation}
+              onRefresh={handleRefresh}
               colors={["rgb(40, 140, 34)", "#bf8801"]}
               tintColor={"#bf8801"}
             />
           }
         >
-          {/* <SearchBar platform="android" placeholder="From" lightTheme /> */}
-
           <View style={styles.categoryContainer}>
             <Text style={{ fontWeight: "bold", fontSize: 18, marginLeft: 15 }}>
               What are you looking for?

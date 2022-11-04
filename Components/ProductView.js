@@ -12,14 +12,7 @@ import { TouchableOpacity } from "react-native";
 import { delProd, likeUnlikeProd } from "../API/productApi";
 import { Err } from "../Functions/Error";
 
-const ProductView = ({
-  products,
-  navigation,
-  setProducts,
-  user,
-  flag,
-  refreshing,
-}) => {
+const ProductView = ({ products, navigation, setProducts, user, flag }) => {
   const likeUnlikeProduct = async (prod, i, value) => {
     try {
       let body = { productId: prod._id };
@@ -37,7 +30,6 @@ const ProductView = ({
     try {
       let data = await delProd(productId);
       let temp = products.filter((item) => item._id !== data._id);
-
       setProducts(temp);
     } catch (error) {
       console.log(error);
@@ -45,9 +37,6 @@ const ProductView = ({
     }
   };
 
-  useEffect(() => {
-    setProducts(products);
-  }, [products]);
   return (
     <View style={styles.cardContainer}>
       {products.map((prod, i) => (

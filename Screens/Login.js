@@ -5,6 +5,8 @@ import {
   Text,
   TouchableOpacity,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -70,7 +72,10 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <View style={[styles.mainContainer, isLoading ? { opacity: 0.2 } : ""]}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : ""}
+      style={[styles.mainContainer, isLoading ? { opacity: 0.2 } : ""]}
+    >
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Login to Continue...</Text>
@@ -110,7 +115,7 @@ const Login = ({ navigation }) => {
         </View>
       </SafeAreaView>
       {isLoading ? <Loader /> : ""}
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

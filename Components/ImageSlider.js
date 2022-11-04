@@ -18,8 +18,8 @@ const ImageSlider = ({ imageData }) => {
           <Image
             source={{ uri: slide.uri ? slide.uri : slide }}
             style={{
-              width: 300,
-              height: 200,
+              width: "100%",
+              height: "100%",
               resizeMode: "contain",
             }}
           />

@@ -87,7 +87,7 @@ const Location = ({ route, navigation }) => {
     };
     let data = await createFormData(body);
     try {
-      getTkn().then((tkn) => {
+      getTkn().then(async (tkn) => {
         console.log(location);
         let config = {
           headers: {
@@ -96,7 +96,8 @@ const Location = ({ route, navigation }) => {
             Authorization: `Bearer ${tkn}`,
           },
         };
-        let resp = addProd(data, config);
+        let resp = await addProd(data, config);
+        console.log(resp);
         setIsLoading(false);
         Alert.alert("Congratulations!!", "Your ad has been posted", [
           { text: "ok", onPress: () => navigation.navigate("Home") },
@@ -144,7 +145,7 @@ const Location = ({ route, navigation }) => {
     getLocation();
   }, []);
   return (
-    <View style={[styles.mainContainer]}>
+    <View style={[styles.mainContainer, isLoading ? { opacity: 0.5 } : ""]}>
       <TouchableOpacity style={styles.card} onPress={locAfterDenied}>
         <View style={styles.cardDetails}>
           <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 5 }}>
@@ -177,7 +178,7 @@ const Location = ({ route, navigation }) => {
           }}
         />
       </View>
-      <TouchableOpacity style={styles.btn} onPress={Post}>
+      <TouchableOpacity disabled={isLoading} style={styles.btn} onPress={Post}>
         <Text style={{ fontWeight: "bold", color: "#fff" }}>Post a Ad</Text>
       </TouchableOpacity>
       {isLoading ? <Loader /> : ""}

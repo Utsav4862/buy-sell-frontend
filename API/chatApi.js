@@ -31,6 +31,7 @@ export const getMessages = async (selectedChatId) => {
 export const sendMsg = async (body) => {
   try {
     let config = await getConfig();
+    console.log(body);
     let { data } = await axios.post(`${URL}/message/send`, body, config);
     return data;
   } catch (error) {

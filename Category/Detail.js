@@ -16,6 +16,8 @@ import { MobileData } from "../data/MobileData";
 import { sellDetailState } from "../Context/SellDetailProvider";
 import { StatusBar } from "expo-status-bar";
 import { Alert } from "react-native";
+import { KeyboardAvoidingView } from "react-native";
+import { Platform } from "react-native";
 
 const Details = ({ route, navigation }) => {
   // const [brand, setBrand] = useState("");
@@ -87,7 +89,10 @@ const Details = ({ route, navigation }) => {
   }, []);
 
   return (
-    <View style={styles.main}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : ""}
+      style={styles.main}
+    >
       <View style={styles.mainContainer}>
         <Text style={styles.header}>Add Details</Text>
         <ScrollView style={styles.Form} showsVerticalScrollIndicator={false}>
@@ -172,7 +177,7 @@ const Details = ({ route, navigation }) => {
           </TouchableOpacity>
         </ScrollView>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

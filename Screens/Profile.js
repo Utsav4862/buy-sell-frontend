@@ -7,22 +7,73 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import ProductView from "../Components/ProductView";
-import { getTkn } from "../Functions/token";
-import axios from "axios";
-import { URL } from "../API/api";
 import { ScrollView } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { myProd } from "../API/productApi";
 import { Err } from "../Functions/Error";
+import { getTkn } from "../Functions/token";
+import { updateImage } from "../API/userApi";
+import * as ImagePicker from "expo-image-picker";
 
 const Profile = ({ navigation }) => {
   const { user } = InfoState();
+  const [image, setImage] = useState(user.profile_img);
   const [products, setProducts] = useState([]);
 
   const myProducts = async () => {
     try {
       let data = await myProd();
       setProducts(data);
+    } catch (error) {
+      console.log(error);
+      Err();
+    }
+  };
+
+  const changeImage = async () => {
+    const formData = new FormData();
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status != "granted") {
+      return;
+    }
+    if (status == "granted") {
+      const response = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsMultipleSelection: false,
+        allowsEditing: true,
+      });
+      if (!response.cancelled) {
+        console.log(response);
+        formData.append("files", {
+          name: new Date() + "_profile",
+          uri: response.uri,
+          type: "image/jpg",
+        });
+
+        uploadImage(formData);
+      }
+    }
+  };
+
+  const uploadImage = async (data) => {
+    try {
+      getTkn()
+        .then(async (tkn) => {
+          let config = {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${tkn}`,
+            },
+          };
+          let resp = await updateImage(data, config);
+          console.log(resp);
+          setImage(resp);
+        })
+        .catch((err) => {
+          console.log(err);
+          Err();
+        });
     } catch (error) {
       console.log(error);
       Err();
@@ -45,23 +96,19 @@ const Profile = ({ navigation }) => {
             <TouchableHighlight style={styles.cardWrapper}>
               <View style={styles.card}>
                 <View style={styles.profileImg}>
-                  <Avatar
-                    source={{ uri: user.profile_img }}
-                    rounded
-                    size={90}
-                  />
+                  <Avatar source={{ uri: image }} rounded size={90} />
                 </View>
                 <View style={styles.detail}>
                   <Text style={{ fontSize: 24, fontWeight: "bold" }}>
                     {user.name}
                   </Text>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={changeImage}>
                     <Text
                       style={{
                         color: "#1d9bf0",
                       }}
                     >
-                      <MaterialCommunityIcons name="pencil" /> edit profile
+                      <MaterialCommunityIcons name="image" /> change photo
                     </Text>
                   </TouchableOpacity>
                 </View>

@@ -25,9 +25,16 @@ import { Err } from "../Functions/Error";
 
 const ENDPOINT = URL;
 let socket, selectedChatCompare;
+const connectionConfig = {
+  jsonp: false,
+  reconnection: true,
+  reconnectionDelay: 100,
+  reconnectionAttempts: 5000,
+  transports: ["websocket"], /// you need to explicitly tell it to use websockets
+};
 const Message = ({ navigation }) => {
   const { selectedChat, user, setNotifications, notifications } = InfoState();
-  const [message, setMessage] = useState();
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
   useLayoutEffect(() => {
@@ -78,22 +85,21 @@ const Message = ({ navigation }) => {
         content: message,
         chatId: selectedChat._id,
       };
-
+      console.log(selectedChat._id);
       let data = await sendMsg(body);
       socket.emit("new message", data);
       setMessages([...messages, data]);
 
       setMessage("");
     } catch (error) {
-      console.log(error);
+      console.log(error, "errrrrr");
       Err();
     }
   };
 
   useEffect(() => {
-    socket = io("http://192.168.1.7:5555");
+    socket = io("http://192.168.1.7:5555", connectionConfig);
     socket.emit("setup", user);
-
     socket.on("connected", () => console.log("connected"));
   }, []);
   useEffect(() => {
@@ -101,9 +107,12 @@ const Message = ({ navigation }) => {
   }, [selectedChat]);
 
   useEffect(() => {
-    socket.on("message received", (newMessageReceived) => {
-      setMessages([...messages, newMessageReceived]);
-    });
+    if (message != "") {
+      socket.on("message received", (newMessageReceived) => {
+        console.log(newMessageReceived);
+        setMessages([...messages, newMessageReceived]);
+      });
+    }
   });
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -114,6 +123,7 @@ const Message = ({ navigation }) => {
         <>
           <View style={styles.page}>
             <FlatList
+              // keyExtractor={}
               data={[...messages].reverse()}
               renderItem={({ item }) => (
                 <View
@@ -137,10 +147,14 @@ const Message = ({ navigation }) => {
             style={styles.input}
             autoFocus={true}
             returnKeyType="send"
-            onEndEditing={sendMessage}
+            keyboardAppearance={true}
+            onSubmitEditing={sendMessage}
           />
 
-          <TouchableOpacity onPress={sendMessage}>
+          <TouchableOpacity
+            disabled={message == "" ? true : false}
+            onPress={sendMessage}
+          >
             <Ionicons name="send" size={24} color={"#2b68e6"} />
           </TouchableOpacity>
         </View>

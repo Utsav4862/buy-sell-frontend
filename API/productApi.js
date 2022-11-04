@@ -30,7 +30,7 @@ export const searchProd = async (search, loc) => {
 export const addProd = async (detail, config) => {
   try {
     let { data } = await axios.post(`${URL}/product/add`, detail, config);
-
+    console.log(data);
     return data;
   } catch (error) {
     Err();

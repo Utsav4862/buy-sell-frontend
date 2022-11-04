@@ -63,7 +63,7 @@ const Search = ({ route, navigation }) => {
       const { cat } = route.params;
       setSearch(cat);
       setFocus(false);
-      setFocus2(false);
+      // setFocus(false);
     } else {
       setFlag(false);
       setSearch("");
@@ -132,7 +132,7 @@ const Search = ({ route, navigation }) => {
               onChangeText={(text) => setLoc(text)}
               onBlur={searchItems}
               returnKeyType="search"
-              onFocus={() => setFocus2(true)}
+              onFocus={() => setFocus(true)}
             />
           </View>
         </View>
@@ -140,7 +140,7 @@ const Search = ({ route, navigation }) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.resultContainer}
         >
-          {flag && !focus && !focus2 ? (
+          {flag ? (
             <View>
               <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                 {searchProducts.length} result found in {loc}

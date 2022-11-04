@@ -1,6 +1,4 @@
 import axios from "axios";
-import { Alert } from "react-native";
-import { getTkn } from "../Functions/token";
 import { URL } from "./api";
 
 export const loginUser = async (email, password) => {
@@ -20,11 +18,13 @@ export const sendEmail = async (email, name) => {
 };
 
 export const signupUser = async (name, email, password) => {
-  let { data } = axios.post(`${URL}/user/signup`, {
+  let { data } = await axios.post(`${URL}/user/signup`, {
     name: name,
     email: email,
     password: password,
   });
+
+  return data;
 };
 
 export const loggedUser = async (tkn) => {
@@ -36,4 +36,13 @@ export const loggedUser = async (tkn) => {
   };
   let { data } = await axios.get(`${URL}/user/currentUser`, config);
   return data;
+};
+
+export const updateImage = async (image, config) => {
+  try {
+    let { data } = await axios.put(`${URL}/user/updateImage`, image, config);
+    return data;
+  } catch (error) {
+    console.log(error, "errr");
+  }
 };
