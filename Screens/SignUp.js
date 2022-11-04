@@ -35,7 +35,6 @@ const Signup = ({ navigation }) => {
         navigation.navigate("OTP", {
           name: name,
           email: email,
-          veriOtp: res.otp,
         });
       }
     } catch (error) {
@@ -67,7 +66,11 @@ const Signup = ({ navigation }) => {
           />
         </View>
 
-        <TouchableOpacity style={styles.btn} onPress={signup}>
+        <TouchableOpacity
+          disabled={isLoading}
+          style={styles.btn}
+          onPress={signup}
+        >
           <Text style={{ color: "#fff", fontWeight: "bold" }}>Next</Text>
         </TouchableOpacity>
 
@@ -75,7 +78,10 @@ const Signup = ({ navigation }) => {
           <Text style={{ fontWeight: "bold", color: "#000" }}>
             Already have an account?{" "}
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <TouchableOpacity
+            disabled={isLoading}
+            onPress={() => navigation.navigate("Login")}
+          >
             <Text style={{ fontWeight: "bold", color: "#2abd6e" }}>Login</Text>
           </TouchableOpacity>
         </View>

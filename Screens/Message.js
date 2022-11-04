@@ -98,7 +98,7 @@ const Message = ({ navigation }) => {
   };
 
   useEffect(() => {
-    socket = io("http://192.168.1.7:5555", connectionConfig);
+    socket = io("https://buy-sell.onrender.com", connectionConfig);
     socket.emit("setup", user);
     socket.on("connected", () => console.log("connected"));
   }, []);

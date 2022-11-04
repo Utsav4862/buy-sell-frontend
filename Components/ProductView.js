@@ -11,8 +11,10 @@ import {
 import { TouchableOpacity } from "react-native";
 import { delProd, likeUnlikeProd } from "../API/productApi";
 import { Err } from "../Functions/Error";
+import { InfoState } from "../Context/InfoProvider";
 
-const ProductView = ({ products, navigation, setProducts, user, flag }) => {
+const ProductView = ({ products, navigation, setProducts, flag }) => {
+  const { user } = InfoState();
   const likeUnlikeProduct = async (prod, i, value) => {
     try {
       let body = { productId: prod._id };

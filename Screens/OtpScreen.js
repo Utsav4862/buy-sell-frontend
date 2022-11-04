@@ -7,6 +7,10 @@ import {
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { verifyOTP } from "../API/userApi";
+import { Alert } from "react-native";
+import { Err } from "../Functions/Error";
+import Loader from "../Components/Loader";
 
 const OtpScreen = ({ route, navigation }) => {
   const pin1Ref = useRef();
@@ -15,22 +19,38 @@ const OtpScreen = ({ route, navigation }) => {
   const pin4Ref = useRef();
 
   const [otp, setOtp] = useState({ 1: "", 2: "", 3: "", 4: "" });
-  const { name, email, veriOtp } = route.params;
-  const verify = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { name, email } = route.params;
+  const verify = async () => {
     let finalOTP = otp[1] + otp[2] + otp[3] + otp[4];
-    if (finalOTP == veriOtp) {
-      console.log("Success");
-      navigation.navigate("Password", {
-        name: name,
+    try {
+      setIsLoading(true);
+      let body = {
         email: email,
-      });
-    } else {
-      console.log("Fail");
+        otp: finalOTP,
+      };
+
+      const resp = await verifyOTP(body);
+      console.log(resp);
+      if (resp.error) {
+        Alert.alert("Oops", resp.error);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+        navigation.navigate("Password", {
+          name: name,
+          email: email,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      Err();
     }
   };
 
   return (
     <View style={styles.mainContainer}>
+      {isLoading ? <Loader /> : ""}
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}>
@@ -91,7 +111,11 @@ const OtpScreen = ({ route, navigation }) => {
           />
         </View>
 
-        <TouchableOpacity style={styles.btn} onPress={verify}>
+        <TouchableOpacity
+          disabled={isLoading}
+          style={styles.btn}
+          onPress={verify}
+        >
           <Text style={{ color: "#fff", fontWeight: "bold" }}>Verify OTP</Text>
         </TouchableOpacity>
       </SafeAreaView>

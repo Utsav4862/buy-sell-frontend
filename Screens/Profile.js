@@ -14,6 +14,7 @@ import { Err } from "../Functions/Error";
 import { getTkn } from "../Functions/token";
 import { updateImage } from "../API/userApi";
 import * as ImagePicker from "expo-image-picker";
+import * as SecureStore from "expo-secure-store";
 
 const Profile = ({ navigation }) => {
   const { user } = InfoState();
@@ -80,6 +81,11 @@ const Profile = ({ navigation }) => {
     }
   };
 
+  const logout = async () => {
+    await SecureStore.deleteItemAsync("TOKEN");
+    navigation.navigate("Login");
+  };
+
   useFocusEffect(
     useCallback(() => {
       myProducts();
@@ -111,6 +117,15 @@ const Profile = ({ navigation }) => {
                       <MaterialCommunityIcons name="image" /> change photo
                     </Text>
                   </TouchableOpacity>
+                  <TouchableOpacity style={styles.logout} onPress={logout}>
+                    <Text
+                      style={{
+                        color: "red",
+                      }}
+                    >
+                      <MaterialCommunityIcons name="logout" size={15} /> Log out
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             </TouchableHighlight>
@@ -119,13 +134,16 @@ const Profile = ({ navigation }) => {
             <Text style={{ fontWeight: "bold", fontSize: 18, marginLeft: 15 }}>
               All Ads
             </Text>
-            <ProductView
-              products={products}
-              setProducts={setProducts}
-              navigation={navigation}
-              user={user}
-              flag={true}
-            />
+            {user ? (
+              <ProductView
+                products={products}
+                setProducts={setProducts}
+                navigation={navigation}
+                flag={true}
+              />
+            ) : (
+              ""
+            )}
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -178,4 +196,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   products: {},
+  logout: {
+    position: "absolute",
+    bottom: -5,
+    right: 50,
+  },
 });

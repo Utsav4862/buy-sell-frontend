@@ -56,7 +56,6 @@ const MyAds = ({ navigation }) => {
               products={products}
               setProducts={setProducts}
               navigation={navigation}
-              user={user}
             />
           </View>
         </ScrollView>

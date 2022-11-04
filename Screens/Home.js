@@ -99,8 +99,8 @@ const Home = ({ navigation }) => {
   };
 
   useEffect(() => {
-    getAllProducts();
     getLoggedUser();
+    getAllProducts();
     getLocation();
     setCat("");
   }, []);
@@ -179,13 +179,16 @@ const Home = ({ navigation }) => {
             <Text style={{ fontWeight: "bold", fontSize: 18, marginLeft: 15 }}>
               All Ads
             </Text>
-            <ProductView
-              products={products}
-              setProducts={setProducts}
-              navigation={navigation}
-              user={user}
-              refreshing={refreshing}
-            />
+            {user ? (
+              <ProductView
+                products={products}
+                setProducts={setProducts}
+                navigation={navigation}
+                refreshing={refreshing}
+              />
+            ) : (
+              ""
+            )}
           </View>
         </ScrollView>
       </View>

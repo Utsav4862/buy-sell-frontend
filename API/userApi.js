@@ -1,6 +1,5 @@
 import axios from "axios";
 import { URL } from "./api";
-
 export const loginUser = async (email, password) => {
   let { data } = await axios.post(`${URL}/user/login`, {
     email: email,
@@ -41,6 +40,15 @@ export const loggedUser = async (tkn) => {
 export const updateImage = async (image, config) => {
   try {
     let { data } = await axios.put(`${URL}/user/updateImage`, image, config);
+    return data;
+  } catch (error) {
+    console.log(error, "errr");
+  }
+};
+
+export const verifyOTP = async (body) => {
+  try {
+    let { data } = await axios.post(`${URL}/user/verify`, body);
     return data;
   } catch (error) {
     console.log(error, "errr");

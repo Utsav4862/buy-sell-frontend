@@ -72,7 +72,12 @@ const ProductScreen = ({ route, navigation }) => {
             </Text>
           </View>
           <View>
-            <Text style={styles.title}>{product.title}</Text>
+            <View style={styles.titleBox}>
+              <Text style={styles.title}>{product.title}</Text>
+              <Text style={styles.subCat}>
+                {product.subCat ? product.subCat : product.category}
+              </Text>
+            </View>
             <Text style={styles.price}>
               <FontAwesome
                 name="rupee"
@@ -134,7 +139,14 @@ const ProductScreen = ({ route, navigation }) => {
             style={{ width: 40, height: 40, borderRadius: 50 }}
           />
 
-          <Text style={{ color: "#fff", marginLeft: 15, fontSize: 18 }}>
+          <Text
+            style={{
+              color: "#fff",
+              marginLeft: 15,
+              fontSize: 18,
+              fontWeight: "bold",
+            }}
+          >
             {product.user.name}
           </Text>
         </View>
@@ -181,8 +193,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "gray",
   },
-  title: {
+  titleBox: {
     marginTop: 20,
+  },
+  subCat: {
+    fontWeight: "bold",
+    color: "#848482",
+    marginTop: 5,
+  },
+  title: {
     fontSize: 22,
     fontWeight: "700",
     color: "#494848",

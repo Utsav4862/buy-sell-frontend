@@ -4,6 +4,8 @@ import { StyleSheet, Text, View } from "react-native";
 import StackNavigation from "./Navigation/StackNavigation";
 import { useFonts } from "expo-font";
 import InfoProvider from "./Context/InfoProvider";
+import { useEffect } from "react";
+import * as SecureStore from "expo-secure-store";
 
 export default function App() {
   const [loaded] = useFonts({
@@ -14,6 +16,7 @@ export default function App() {
     return null;
   }
 
+  // useEffect(() => {}, []);
   console.log(loaded);
   return (
     <InfoProvider>

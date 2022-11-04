@@ -30,7 +30,6 @@ const Chat = ({ navigation }) => {
     try {
       let data = await getChats();
       // setIsLoading(false);
-      console.log(data);
       setChats(data);
     } catch (error) {
       // setIsLoading(false);
