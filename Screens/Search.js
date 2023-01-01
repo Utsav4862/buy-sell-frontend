@@ -30,7 +30,7 @@ const Search = ({ route, navigation }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [loc, setLoc] = useState(
-    currLocation.district + ", " + currLocation.city
+    currLocation ? currLocation.district + ", " + currLocation.city : ""
   );
   const input = useRef();
   const [searchProducts, setSearchProducts] = useState([]);
@@ -69,8 +69,6 @@ const Search = ({ route, navigation }) => {
       setSearch("");
       setFocus(true);
     }
-    location = currLocation.city;
-    console.log(location);
   }, []);
   return (
     <View style={styles.container}>
@@ -126,11 +124,6 @@ const Search = ({ route, navigation }) => {
               style={{ fontWeight: "bold", marginRight: 10 }}
             />
             <TextInput
-              defaultValue={
-                currLocation
-                  ? currLocation.district + ", " + currLocation.city
-                  : ""
-              }
               style={styles.input}
               value={loc}
               onChangeText={(text) => setLoc(text)}

@@ -98,7 +98,7 @@ const Message = ({ navigation }) => {
   };
 
   useEffect(() => {
-    socket = io("https://buy-sell.onrender.com", connectionConfig);
+    socket = io("https://buy-sell-api.up.railway.app", connectionConfig);
     socket.emit("setup", user);
     socket.on("connected", () => console.log("connected"));
   }, []);
@@ -214,7 +214,6 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    // width: "90%",
     height: 40,
     flex: 1,
     marginLeft: 10,

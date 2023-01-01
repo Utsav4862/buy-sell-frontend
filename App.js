@@ -2,22 +2,22 @@ import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import StackNavigation from "./Navigation/StackNavigation";
-import { useFonts } from "expo-font";
+// import { useFonts } from "expo-font";
 import InfoProvider from "./Context/InfoProvider";
 import { useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 
 export default function App() {
-  const [loaded] = useFonts({
-    ProximaNova: require("./assets/Fonts/ProximaNova-Regular.otf"),
-    ProximaNovaBold: require("./assets/Fonts/ProximaNova-Bold.otf"),
-  });
-  if (!loaded) {
-    return null;
-  }
+  // const [loaded] = useFonts({
+  //   ProximaNova: require("./assets/Fonts/ProximaNova-Regular.otf"),
+  //   ProximaNovaBold: require("./assets/Fonts/ProximaNova-Bold.otf"),
+  // });
+  // if (!loaded) {
+  //   return null;
+  // }
 
   // useEffect(() => {}, []);
-  console.log(loaded);
+  // console.log(loaded);
   return (
     <InfoProvider>
       <NavigationContainer>
