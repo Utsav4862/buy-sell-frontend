@@ -20,8 +20,11 @@ const Signup = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const signup = async () => {
-    if (email == "" || !email.includes("@")) {
-      Alert.alert("Invalid", "Enter Valid Detail");
+    const reg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if(!reg.test(email)){
+      Alert.alert("Error", "Enter Valid Email Address", [
+        { text: "Ok" },
+      ]);
       return;
     }
     try {

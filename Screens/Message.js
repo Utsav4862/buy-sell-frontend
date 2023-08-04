@@ -98,7 +98,7 @@ const Message = ({ navigation }) => {
   };
 
   useEffect(() => {
-    socket = io("https://buy-sell-api.up.railway.app", connectionConfig);
+    socket = io("https://buy-sell.onrender.com", connectionConfig);
     socket.emit("setup", user);
     socket.on("connected", () => console.log("connected"));
   }, []);

@@ -21,10 +21,17 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const login = async () => {
-    // if (email == "" || !email.includes("@") || password == "") {
-    //   Alert.alert("Invalid", "Enter Valid Detail");
-    //   return;
-    // }
+    const reg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if(!reg.test(email)){
+      Alert.alert("Error", "Enter Valid Email Address", [
+        { text: "Ok" },
+      ]);
+      return;
+    }
+    if (password == "") {
+      Alert.alert("Invalid", "Enter Valid Password");
+      return;
+    }
     try {
       setIsLoading(true);
       let res = await loginUser(email, password);

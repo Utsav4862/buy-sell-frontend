@@ -29,6 +29,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "56e0fb4a-a076-4908-b7db-3c0265bdd6de"
+      }
+    },
+    "owner": "utsav48"
   }
 }
